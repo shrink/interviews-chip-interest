@@ -1,0 +1,40 @@
+{
+  "name": "shrink/interviews-chip-interest",
+  "type": "library",
+  "description": "Manage user interest accounts.",
+  "license": "MIT",
+  "require": {
+    "php": "^7.4"
+  },
+  "require-dev": {
+    "nunomaduro/phpinsights": "^1.14",
+    "phpunit/phpunit": "^9.0",
+    "vimeo/psalm": "^3.11"
+  },
+  "autoload": {
+    "psr-4": {
+      "Shrink\\Chip\\Interest\\": "src/Interest/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\Chip\\Interest\\": "tests/Interest/"
+    }
+  },
+  "scripts": {
+    "check": [
+      "@test",
+      "@static",
+      "@insights"
+    ],
+    "insights": [
+      "vendor/bin/phpinsights --ansi --no-interaction --config-path=insights.php"
+    ],
+    "static": [
+      "vendor/bin/psalm --long-progress --report=psalm.junit.xml"
+    ],
+    "test": [
+      "vendor/bin/phpunit --colors=always"
+    ]
+  }
+}
