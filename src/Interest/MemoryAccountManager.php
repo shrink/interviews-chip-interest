@@ -60,6 +60,7 @@ final class MemoryAccountManager implements
         $user = $this->users->userById($id);
 
         $account = new Account(
+            $user->id(),
             $this->rates->interestRateForUser($user),
             []
         );

@@ -13,6 +13,8 @@ use function is_a;
 
 final class Account
 {
+    private UserId $userId;
+
     /**
      * Interest rate as a whole number, representing percentages to two decimal
      * places (from 0 (0.00%) to 10000 (100.00%)).
@@ -27,8 +29,11 @@ final class Account
     /**
      * @param array<\Shrink\Chip\Interest\Transaction> $transactions
      */
-    public function __construct(int $interestRate, array $transactions)
-    {
+    public function __construct(
+        UserId $userId,
+        int $interestRate,
+        array $transactions
+    ) {
         $this->guardTransactionTypes($transactions);
 
         if ($interestRate < 0) {
@@ -37,8 +42,14 @@ final class Account
             );
         }
 
+        $this->userId = $userId;
         $this->interestRate = $interestRate;
         $this->transactions = $transactions;
+    }
+
+    public function userId(): UserId
+    {
+        return $this->userId;
     }
 
     public function interestRate(): int
