@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Shrink\Chip\Interest\Account;
 use Shrink\Chip\Interest\Transaction;
+use Shrink\Chip\Interest\UserId;
 
 final class AccountTest extends TestCase
 {
@@ -20,7 +21,11 @@ final class AccountTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
 
-        new Account(-100, []);
+        new Account(
+            new UserId('88224979-406e-4e32-9458-55836e4e1f95'),
+            -100,
+            []
+        );
     }
 
     /**
@@ -28,7 +33,11 @@ final class AccountTest extends TestCase
      */
     public function AccountHasInterestRate(): void
     {
-        $account = new Account(100, []);
+        $account = new Account(
+            new UserId('88224979-406e-4e32-9458-55836e4e1f95'),
+            100,
+            []
+        );
 
         $this->assertSame(100, $account->interestRate());
     }
@@ -40,7 +49,11 @@ final class AccountTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        new Account(0, [1]);
+        new Account(
+            new UserId('88224979-406e-4e32-9458-55836e4e1f95'),
+            0,
+            [1]
+        );
     }
 
     /**
@@ -53,7 +66,11 @@ final class AccountTest extends TestCase
             new Transaction(20, new DateTimeImmutable()),
         ];
 
-        $account = new Account(0, $transactions);
+        $account = new Account(
+            new UserId('88224979-406e-4e32-9458-55836e4e1f95'),
+            0,
+            $transactions
+        );
 
         $this->assertSame($transactions, $account->transactions());
     }
@@ -69,7 +86,11 @@ final class AccountTest extends TestCase
             new Transaction(90, new DateTimeImmutable()),
         ];
 
-        $account = new Account(0, $transactions);
+        $account = new Account(
+            new UserId('88224979-406e-4e32-9458-55836e4e1f95'),
+            0,
+            $transactions
+        );
 
         $this->assertSame(100, $account->balance());
     }
@@ -79,7 +100,11 @@ final class AccountTest extends TestCase
      */
     public function AccountWithoutTransactionsHasZeroBalance(): void
     {
-        $account = new Account(0, []);
+        $account = new Account(
+            new UserId('88224979-406e-4e32-9458-55836e4e1f95'),
+            0,
+            []
+        );
 
         $this->assertSame(0, $account->balance());
     }
@@ -89,9 +114,11 @@ final class AccountTest extends TestCase
      */
     public function NewTransactionChangesBalance(): void
     {
-        $account = new Account(0, [
-            new Transaction(10, new DateTimeImmutable()),
-        ]);
+        $account = new Account(
+            new UserId('88224979-406e-4e32-9458-55836e4e1f95'),
+            0,
+            [new Transaction(10, new DateTimeImmutable())],
+        );
 
         $account->recordTransaction(
             new Transaction(90, new DateTimeImmutable())

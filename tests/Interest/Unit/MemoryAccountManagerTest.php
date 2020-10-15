@@ -21,7 +21,7 @@ final class MemoryAccountManagerTest extends TestCase
     public function AccountIsFoundByUserId(): void
     {
         $userId = new UserId('88224979-406e-4e32-9458-55836e4e1f95');
-        $account = new Account(100, []);
+        $account = new Account($userId, 100, []);
 
         $memoryAccountManager = new MemoryAccountManager(
             [(string) $userId => $account],
@@ -76,7 +76,7 @@ final class MemoryAccountManagerTest extends TestCase
 
         $userId = new UserId('88224979-406e-4e32-9458-55836e4e1f95');
 
-        $account = new Account(100, []);
+        $account = new Account($userId, 100, []);
 
         $memoryAccountManager = new MemoryAccountManager(
             [(string) $userId => $account],
@@ -113,7 +113,7 @@ final class MemoryAccountManagerTest extends TestCase
             $users
         );
 
-        $expectedAccount = new Account(50, []);
+        $expectedAccount = new Account($userId, 50, []);
 
         $memoryAccountManager->openInterestAccount($userId);
 
