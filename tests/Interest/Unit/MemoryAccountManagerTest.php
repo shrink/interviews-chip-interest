@@ -9,6 +9,7 @@ use RuntimeException;
 use Shrink\Chip\Interest\Account;
 use Shrink\Chip\Interest\CalculatesInterestRates;
 use Shrink\Chip\Interest\MemoryAccountManager;
+use Shrink\Chip\Interest\ProvidesUserInformation;
 use Shrink\Chip\Interest\User;
 use Shrink\Chip\Interest\UserId;
 
@@ -22,9 +23,11 @@ final class MemoryAccountManagerTest extends TestCase
         $userId = new UserId('88224979-406e-4e32-9458-55836e4e1f95');
         $account = new Account(100, []);
 
-        $memoryAccountManager = new MemoryAccountManager([
-            (string) $userId => $account,
-        ], $this->createMock(CalculatesInterestRates::class));
+        $memoryAccountManager = new MemoryAccountManager(
+            [(string) $userId => $account],
+            $this->createMock(CalculatesInterestRates::class),
+            $this->createMock(ProvidesUserInformation::class)
+        );
 
         $this->assertTrue($memoryAccountManager->userHasInterestAccount($userId));
         $this->assertSame($account, $memoryAccountManager->interestAccountByUserId($userId));
@@ -36,9 +39,11 @@ final class MemoryAccountManagerTest extends TestCase
     public function UserDoesNotHaveAccountWhenNotFound(): void
     {
         $userId = new UserId('88224979-406e-4e32-9458-55836e4e1f95');
+
         $memoryAccountManager = new MemoryAccountManager(
             [],
-            $this->createMock(CalculatesInterestRates::class)
+            $this->createMock(CalculatesInterestRates::class),
+            $this->createMock(ProvidesUserInformation::class)
         );
 
         $this->assertFalse($memoryAccountManager->userHasInterestAccount($userId));
@@ -52,9 +57,11 @@ final class MemoryAccountManagerTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $userId = new UserId('88224979-406e-4e32-9458-55836e4e1f95');
+
         $memoryAccountManager = new MemoryAccountManager(
             [],
-            $this->createMock(CalculatesInterestRates::class)
+            $this->createMock(CalculatesInterestRates::class),
+            $this->createMock(ProvidesUserInformation::class)
         );
 
         $memoryAccountManager->interestAccountByUserId($userId);
@@ -67,18 +74,17 @@ final class MemoryAccountManagerTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
 
-        $user = new User(
-            $userId = new UserId('88224979-406e-4e32-9458-55836e4e1f95'),
-            0
-        );
+        $userId = new UserId('88224979-406e-4e32-9458-55836e4e1f95');
 
         $account = new Account(100, []);
 
-        $memoryAccountManager = new MemoryAccountManager([
-            (string) $userId => $account,
-        ], $this->createMock(CalculatesInterestRates::class));
+        $memoryAccountManager = new MemoryAccountManager(
+            [(string) $userId => $account],
+            $this->createMock(CalculatesInterestRates::class),
+            $this->createMock(ProvidesUserInformation::class)
+        );
 
-        $memoryAccountManager->openInterestAccount($user);
+        $memoryAccountManager->openInterestAccount($userId);
     }
 
     /**
@@ -96,12 +102,20 @@ final class MemoryAccountManagerTest extends TestCase
             ->with($user)
             ->willReturn(50);
 
+        ($users = $this->createMock(ProvidesUserInformation::class))
+            ->method('userById')
+            ->with($userId)
+            ->willReturn($user);
 
-        $memoryAccountManager = new MemoryAccountManager([], $interestRates);
+        $memoryAccountManager = new MemoryAccountManager(
+            [],
+            $interestRates,
+            $users
+        );
 
         $expectedAccount = new Account(50, []);
 
-        $memoryAccountManager->openInterestAccount($user);
+        $memoryAccountManager->openInterestAccount($userId);
 
         $this->assertEquals(
             $expectedAccount,

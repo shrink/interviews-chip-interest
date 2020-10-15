@@ -6,5 +6,5 @@ namespace Shrink\Chip\Interest;
 
 interface OpensInterestAccounts
 {
-    public function openInterestAccount(User $user): void;
+    public function openInterestAccount(UserId $id): void;
 }

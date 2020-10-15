@@ -18,13 +18,19 @@ final class MemoryAccountManager implements
 
     private CalculatesInterestRates $rates;
 
+    private ProvidesUserInformation $users;
+
     /**
      * @param array<string,\Shrink\Chip\Interest\Account> $accounts
      */
-    public function __construct(array $accounts, CalculatesInterestRates $rates)
-    {
+    public function __construct(
+        array $accounts,
+        CalculatesInterestRates $rates,
+        ProvidesUserInformation $users
+    ) {
         $this->accounts = $accounts;
         $this->rates = $rates;
+        $this->users = $users;
     }
 
     public function userHasInterestAccount(UserId $id): bool
@@ -43,13 +49,15 @@ final class MemoryAccountManager implements
         return $this->accounts[(string) $id];
     }
 
-    public function openInterestAccount(User $user): void
+    public function openInterestAccount(UserId $id): void
     {
-        if ($this->userHasInterestAccount($user->id())) {
+        if ($this->userHasInterestAccount($id)) {
             throw new RuntimeException(
-                "{$user->id()} already has an interest account."
+                "{$id} already has an interest account."
             );
         }
+
+        $user = $this->users->userById($id);
 
         $account = new Account(
             $this->rates->interestRateForUser($user),
