@@ -24,6 +24,43 @@ $account->balance();
 | [`ProvidesInterestAccounts`][provides-interest-accounts] | [`MemoryAccountManager`][memory-account-manager] Provides Interest Accounts from memory |
 | [`ProvidesUserInformation`][provides-users-information] | [`ChipUserApi`][chip-user-api] Provides user information from the Chip HTTP API |
 
+### Notes
+
+* All numeric values are used as integers to avoid floating point math errors
+that are possible with PHP. A percentage value should be passed as an integer
+representing the number of 1/100ths. For example, `1` is equivalent to `0.01%`,
+`450` is equivalent to `4.50%` and `10000` is equivalent to `100.00%`.
+
+### Income Based Rates
+
+Income based rates are calculated using a minimum required amount, with a
+default rate for any user that does not provide income information or does not
+meet any minimum requirements.
+
+```php
+new IncomeBasedRate(
+    $default = 50,
+    $rates = [
+      $minimum = 0 => $rate = 093,
+      5000 => 102,
+    ]
+);
+```
+
+### Memory Interest Calculator
+
+Interest is calculated based on the Account balance, Account interest rate and
+the award frequency -- for example, an award frequency of `3` will award 3 days
+of interest on the balance. Any awards less than 1 penny (`>0 <1`) will be held
+until the total pending awards is at least 1 penny.
+
+```php
+new MemoryInterestCalculator(
+    $awardFrequency = 3,
+    Lcobucci\Clock\Clock
+);
+```
+
 ### Chip User API
 
 The Chip User API provides user data over an http interface. You will need one
