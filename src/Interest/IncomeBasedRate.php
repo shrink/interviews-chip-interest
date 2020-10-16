@@ -29,6 +29,11 @@ final class IncomeBasedRate implements CalculatesInterestRates
         $this->rates = $rates;
     }
 
+    /**
+     * Determine the interest rate for the user using their income information,
+     * with a default amount for users that we do not have monthly income
+     * information for.
+     */
     public function interestRateForUser(User $user): int
     {
         $userRate = $this->default;
