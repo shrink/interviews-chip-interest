@@ -8,6 +8,9 @@ use Lcobucci\Clock\Clock;
 
 final class MemoryInterestCalculator implements AwardsInterest
 {
+    /**
+     * Number of days to award interest for.
+     */
     private int $awardFrequency;
 
     /**
@@ -23,6 +26,11 @@ final class MemoryInterestCalculator implements AwardsInterest
         $this->clock = $clock;
     }
 
+    /**
+     * The total award amount is calculated using the amount earned for this
+     * period and any pending amounts. The total award amount must exceed one
+     * penny for the award to be granted, otherwise it is recorded as pending.
+     */
     public function awardEarnedInterest(Account $account): void
     {
         $userId = (string) $account->userId();
